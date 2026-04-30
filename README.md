@@ -22,7 +22,7 @@ The package intentionally ships FFF as a binary XCFramework. Upstream FFF is a R
 Add the package as a dependency and depend on the `FFFSearch` product:
 
 ```swift
-.package(url: "<package-url>", from: "0.1.0")
+.package(url: "git@github.com:krzyzanowskim/FFFSearch.git", from: "0.1.0")
 ```
 
 For local development:
