@@ -8,7 +8,7 @@ help:
 		'  make                Rebuild binary artifact, show binary info, build, and test' \
 		'  make build          Build the Swift package' \
 		'  make release        Build the Swift package in release mode' \
-		'  make test           Run Swift package tests' \
+		'  make test           Run Swift package tests when present' \
 		'  make describe       Print SwiftPM package description' \
 		'  make rebuild-binary Rebuild Binary/CFFF.xcframework from FFF source' \
 		'  make binary-info    Print XCFramework and Mach-O slice info' \
@@ -21,7 +21,11 @@ release:
 	swift build -c release
 
 test:
-	swift test
+	@if [ -d Tests ]; then \
+		swift test; \
+	else \
+		echo "No Tests directory; skipping swift test."; \
+	fi
 
 describe:
 	swift package describe

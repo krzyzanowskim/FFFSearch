@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Build the FFF C API as a framework-wrapped XCFramework for the local
-# FFFSearchPackage binary target.
+# FFFSearch binary target.
 #
 # Defaults are pinned to the source revision used for the checked-in artifact.
 # Override FFF_SOURCE_DIR to build from an existing checkout while developing.
