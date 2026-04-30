@@ -16,6 +16,17 @@ scripts/build-fff-xcframework.sh
 
 The script pins FFF to commit `ca7bf03` by default and builds both `aarch64-apple-darwin` and `x86_64-apple-darwin` slices. Override `FFF_REF` or `FFF_SOURCE_DIR` for local experiments.
 
+Convenience targets are available through `make`:
+
+```bash
+make
+make build
+make rebuild-binary
+make binary-info
+```
+
+Running `make` rebuilds the binary artifact, prints binary metadata, builds the Swift package, and runs tests.
+
 ## Commander integration
 
 Commander expects this package as a sibling checkout:
