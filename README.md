@@ -6,14 +6,14 @@ The package intentionally ships FFF as a binary XCFramework. Upstream FFF is a R
 
 ## Contents
 
-- `Binary/CFFF.xcframework` — framework-wrapped universal macOS build of FFF's `fff-c` library.
+- `Binary/CFFF.xcframework` — framework-wrapped Apple platform builds of FFF's `fff-c` library (dynamic with dSYMs for macOS, iOS, tvOS, and visionOS; static for watchOS, where Rust does not support `cdylib`).
 - `Sources/FFFSearch` — Swift wrapper around the C API.
 - `scripts/build-fff-xcframework.sh` — rebuilds the binary artifact from FFF source.
 - `Makefile` — convenience targets for full rebuilds and package checks.
 
 ## Requirements
 
-- macOS 13 or newer.
+- macOS 13, iOS 13, tvOS 13, visionOS 1, or watchOS 9 or newer.
 - SwiftPM / Xcode command line tools.
 - Rust and `rustup` when rebuilding `Binary/CFFF.xcframework`.
 
@@ -47,7 +47,7 @@ make rebuild-binary
 make binary-info
 ```
 
-The rebuild script pins FFF to commit `ca7bf03` by default and builds both `aarch64-apple-darwin` and `x86_64-apple-darwin` slices. Override `FFF_REF` or `FFF_SOURCE_DIR` for local experiments:
+The rebuild script pins FFF to commit `ca7bf03` by default and builds Apple platform slices for macOS, iOS, tvOS, visionOS, and watchOS. It keeps release debug information, emits dSYMs for dynamic framework slices, and leaves watchOS static object debug info available for the consuming app's final dSYM. Some Intel simulator/watch device Rust targets may be unavailable on a given Rust toolchain; the script includes them when `rustup` provides prebuilt standard libraries and skips them otherwise. Override `FFF_REF` or `FFF_SOURCE_DIR` for local experiments:
 
 ```bash
 FFF_REF=<commit> make rebuild-binary

@@ -35,7 +35,14 @@ rebuild-binary:
 
 binary-info:
 	plutil -p Binary/CFFF.xcframework/Info.plist
-	lipo -info Binary/CFFF.xcframework/macos-arm64_x86_64/CFFF.framework/Versions/A/CFFF
+	@find Binary/CFFF.xcframework -path '*/CFFF.framework/CFFF' -type f | sort | while IFS= read -r binary; do \
+		echo "==> $$binary"; \
+		lipo -info "$$binary"; \
+	done
+	@find Binary/CFFF.xcframework -name '*.dSYM' -type d | sort | while IFS= read -r dsym; do \
+		echo "==> $$dsym"; \
+		dwarfdump --uuid "$$dsym" || true; \
+	done
 
 clean:
 	swift package clean

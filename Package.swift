@@ -4,7 +4,11 @@ import PackageDescription
 let package = Package(
     name: "FFFSearch",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v13),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .visionOS(.v1),
+        .watchOS(.v9)
     ],
     products: [
         .library(
