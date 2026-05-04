@@ -218,11 +218,33 @@ framework module CFFF {
 MODULEMAP
 }
 
-finish_framework_bundle() {
+install_framework_metadata() {
+  local headers_dir="$1"
+  local modules_dir="$2"
+  local plist="$3"
+  mkdir -p "$headers_dir" "$modules_dir" "$(dirname "$plist")"
+  cp "$FFF_SOURCE_DIR/crates/fff-c/include/fff.h" "$headers_dir/fff.h"
+  make_modulemap "$modules_dir/module.modulemap"
+  make_info_plist "$plist"
+}
+
+finish_shallow_framework_bundle() {
   local framework="$1"
-  cp "$FFF_SOURCE_DIR/crates/fff-c/include/fff.h" "$framework/Headers/fff.h"
-  make_modulemap "$framework/Modules/module.modulemap"
-  make_info_plist "$framework/Info.plist"
+  install_framework_metadata "$framework/Headers" "$framework/Modules" "$framework/Info.plist"
+}
+
+finish_versioned_framework_bundle() {
+  local framework="$1"
+  install_framework_metadata \
+    "$framework/Versions/A/Headers" \
+    "$framework/Versions/A/Modules" \
+    "$framework/Versions/A/Resources/Info.plist"
+
+  ln -s A "$framework/Versions/Current"
+  ln -s Versions/Current/CFFF "$framework/CFFF"
+  ln -s Versions/Current/Headers "$framework/Headers"
+  ln -s Versions/Current/Modules "$framework/Modules"
+  ln -s Versions/Current/Resources "$framework/Resources"
 }
 
 make_dsym_info_plist() {
@@ -288,8 +310,16 @@ make_dynamic_framework() {
   shift
   local targets=("$@")
   local framework="$BUILD_DIR/$identifier/CFFF.framework"
+  local binary="$framework/CFFF"
+  local install_name="@rpath/CFFF.framework/CFFF"
 
-  mkdir -p "$framework/Headers" "$framework/Modules"
+  if [[ "$identifier" == "macos" ]]; then
+    mkdir -p "$framework/Versions/A"
+    binary="$framework/Versions/A/CFFF"
+    install_name="@rpath/CFFF.framework/Versions/A/CFFF"
+  else
+    mkdir -p "$framework/Headers" "$framework/Modules"
+  fi
 
   local inputs=()
   local target
@@ -299,13 +329,17 @@ make_dynamic_framework() {
 
   echo "==> Packaging dynamic $identifier (${targets[*]})"
   if [[ "${#inputs[@]}" -eq 1 ]]; then
-    cp "${inputs[0]}" "$framework/CFFF"
+    cp "${inputs[0]}" "$binary"
   else
-    lipo -create "${inputs[@]}" -output "$framework/CFFF"
+    lipo -create "${inputs[@]}" -output "$binary"
   fi
 
-  install_name_tool -id @rpath/CFFF.framework/CFFF "$framework/CFFF"
-  finish_framework_bundle "$framework"
+  install_name_tool -id "$install_name" "$binary"
+  if [[ "$identifier" == "macos" ]]; then
+    finish_versioned_framework_bundle "$framework"
+  else
+    finish_shallow_framework_bundle "$framework"
+  fi
 
   echo "==> Packaging dSYM for $identifier"
   make_dsym_from_rust_outputs "$identifier" "${targets[@]}"
@@ -332,7 +366,7 @@ make_static_framework() {
     lipo -create "${inputs[@]}" -output "$framework/CFFF"
   fi
 
-  finish_framework_bundle "$framework"
+  finish_shallow_framework_bundle "$framework"
 }
 
 all_build_targets=("${required_targets[@]}" "${available_optional_targets[@]}")
@@ -376,7 +410,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT_DIR"
 
 plutil -p "$OUTPUT_DIR/Info.plist"
-find "$OUTPUT_DIR" -path '*/CFFF.framework/CFFF' -type f -print0 | sort -z | while IFS= read -r -d '' binary; do
+find "$OUTPUT_DIR" -path '*/CFFF.framework/CFFF' -print0 | sort -z | while IFS= read -r -d '' binary; do
   echo "==> $binary"
   lipo -info "$binary"
 done
