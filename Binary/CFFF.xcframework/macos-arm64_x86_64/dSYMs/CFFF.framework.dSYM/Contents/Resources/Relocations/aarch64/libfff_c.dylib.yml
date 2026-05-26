@@ -5173,7 +5173,7 @@ relocations:
   - { offset: 0xD425CE, size: 0x8, addend: 0x0, symName: _parse_ignore_file, symObjAddr: 0x99C, symBinAddr: 0x239070, symSize: 0x3C4 }
   - { offset: 0xD427B3, size: 0x8, addend: 0x0, symName: _git_ignore_path_is_ignored, symObjAddr: 0xE24, symBinAddr: 0x239434, symSize: 0x300 }
   - { offset: 0xD42994, size: 0x8, addend: 0x0, symName: _git_index_entry_srch, symObjAddr: 0x0, symBinAddr: 0x239734, symSize: 0xB4 }
-  - { offset: 0xD429B3, size: 0x8, addend: 0x0, symName: _git_index__enforce_unsaved_safety, symObjAddr: 0x2E78F, symBinAddr: 0x3A3C18, symSize: 0x0 }
+  - { offset: 0xD429B3, size: 0x8, addend: 0x0, symName: _git_index__enforce_unsaved_safety, symObjAddr: 0x2E787, symBinAddr: 0x3A3C18, symSize: 0x0 }
   - { offset: 0xD43BDD, size: 0x8, addend: 0x0, symName: _git_index_entry_srch, symObjAddr: 0x0, symBinAddr: 0x239734, symSize: 0xB4 }
   - { offset: 0xD43BE5, size: 0x8, addend: 0x0, symName: _git_index_entry_isrch, symObjAddr: 0xB4, symBinAddr: 0x2397E8, symSize: 0xB4 }
   - { offset: 0xD43C7F, size: 0x8, addend: 0x0, symName: _git_index_entry_isrch, symObjAddr: 0xB4, symBinAddr: 0x2397E8, symSize: 0xB4 }
@@ -5679,7 +5679,7 @@ relocations:
   - { offset: 0xD669F3, size: 0x8, addend: 0x0, symName: _git_oid__fromstrn, symObjAddr: 0x0, symBinAddr: 0x24D900, symSize: 0x108 }
   - { offset: 0xD66A12, size: 0x8, addend: 0x0, symName: _git_oid__empty_blob_sha1, symObjAddr: 0x1710, symBinAddr: 0x301020, symSize: 0x0 }
   - { offset: 0xD66A6F, size: 0x8, addend: 0x0, symName: _git_oid__empty_tree_sha1, symObjAddr: 0x1724, symBinAddr: 0x301034, symSize: 0x0 }
-  - { offset: 0xD66A8C, size: 0x8, addend: 0x0, symName: _thread_str_key, symObjAddr: 0x85D0, symBinAddr: 0x3A3988, symSize: 0x0 }
+  - { offset: 0xD66A8C, size: 0x8, addend: 0x0, symName: _thread_str_key, symObjAddr: 0x85C8, symBinAddr: 0x3A3988, symSize: 0x0 }
   - { offset: 0xD66AC1, size: 0x8, addend: 0x0, symName: _from_hex, symObjAddr: 0x1738, symBinAddr: 0x301048, symSize: 0x0 }
   - { offset: 0xD66B6E, size: 0x8, addend: 0x0, symName: _git_oid__fromstrn, symObjAddr: 0x0, symBinAddr: 0x24D900, symSize: 0x108 }
   - { offset: 0xD66CA8, size: 0x8, addend: 0x0, symName: _git_oid__fromstr, symObjAddr: 0x14C, symBinAddr: 0x24DA08, symSize: 0x14 }
@@ -5711,7 +5711,7 @@ relocations:
   - { offset: 0xD675DD, size: 0x8, addend: 0x0, symName: _git_oid_equal, symObjAddr: 0x10D8, symBinAddr: 0x24E560, symSize: 0x24 }
   - { offset: 0xD67607, size: 0x8, addend: 0x0, symName: _git_oid_equal, symObjAddr: 0x10D8, symBinAddr: 0x24E560, symSize: 0x24 }
   - { offset: 0xD67635, size: 0x8, addend: 0x0, symName: _git_oid_is_zero, symObjAddr: 0x1270, symBinAddr: 0x24E584, symSize: 0x140 }
-  - { offset: 0xD676E7, size: 0x8, addend: 0x0, symName: _git_disable_pack_keep_file_checks, symObjAddr: 0x16C61, symBinAddr: 0x3A3C28, symSize: 0x0 }
+  - { offset: 0xD676E7, size: 0x8, addend: 0x0, symName: _git_disable_pack_keep_file_checks, symObjAddr: 0x16C59, symBinAddr: 0x3A3C28, symSize: 0x0 }
   - { offset: 0xD67E1A, size: 0x8, addend: 0x0, symName: _git_pack_oidmap_contains, symObjAddr: 0x8, symBinAddr: 0x24E6C4, symSize: 0xF4 }
   - { offset: 0xD67EDE, size: 0x8, addend: 0x0, symName: _git_pack_oidmap_dispose, symObjAddr: 0x274, symBinAddr: 0x24E7B8, symSize: 0x54 }
   - { offset: 0xD6800A, size: 0x8, addend: 0x0, symName: _git_pack_oidmap_put, symObjAddr: 0x3E0, symBinAddr: 0x24E80C, symSize: 0x270 }
@@ -6371,11 +6371,11 @@ relocations:
   - { offset: 0xD936D9, size: 0x8, addend: 0x0, symName: _p_write, symObjAddr: 0x1E4, symBinAddr: 0x26AD70, symSize: 0xCC }
   - { offset: 0xD93756, size: 0x8, addend: 0x0, symName: _p_write, symObjAddr: 0x1E4, symBinAddr: 0x26AD70, symSize: 0xCC }
   - { offset: 0xD93845, size: 0x8, addend: 0x0, symName: _git_rand_global_init, symObjAddr: 0x0, symBinAddr: 0x26AE3C, symSize: 0x31C }
-  - { offset: 0xD93871, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2378, symBinAddr: 0x3A39A8, symSize: 0x0 }
-  - { offset: 0xD9387C, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2378, symBinAddr: 0x3A39A8, symSize: 0x0 }
-  - { offset: 0xD93889, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2378, symBinAddr: 0x3A39A8, symSize: 0x0 }
-  - { offset: 0xD93896, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2378, symBinAddr: 0x3A39A8, symSize: 0x0 }
-  - { offset: 0xD938D0, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2378, symBinAddr: 0x3A39A8, symSize: 0x0 }
+  - { offset: 0xD93871, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2370, symBinAddr: 0x3A39A8, symSize: 0x0 }
+  - { offset: 0xD9387C, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2370, symBinAddr: 0x3A39A8, symSize: 0x0 }
+  - { offset: 0xD93889, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2370, symBinAddr: 0x3A39A8, symSize: 0x0 }
+  - { offset: 0xD93896, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2370, symBinAddr: 0x3A39A8, symSize: 0x0 }
+  - { offset: 0xD938D0, size: 0x8, addend: 0x0, symName: __MergedGlobals, symObjAddr: 0x2370, symBinAddr: 0x3A39A8, symSize: 0x0 }
   - { offset: 0xD93AB1, size: 0x8, addend: 0x0, symName: _git_rand_global_init, symObjAddr: 0x0, symBinAddr: 0x26AE3C, symSize: 0x31C }
   - { offset: 0xD93C1A, size: 0x8, addend: 0x0, symName: _git_rand_global_shutdown, symObjAddr: 0x414, symBinAddr: 0x26B158, symSize: 0xC }
   - { offset: 0xD93C22, size: 0x8, addend: 0x0, symName: _git_rand_next, symObjAddr: 0x420, symBinAddr: 0x26B164, symSize: 0x68 }
@@ -6633,7 +6633,7 @@ relocations:
   - { offset: 0xD9B3A6, size: 0x8, addend: 0x0, symName: _git_openssl_stream_global_init, symObjAddr: 0x0, symBinAddr: 0x271D90, symSize: 0x8 }
   - { offset: 0xD9B3CD, size: 0x8, addend: 0x0, symName: _git_openssl_stream_global_init, symObjAddr: 0x0, symBinAddr: 0x271D90, symSize: 0x8 }
   - { offset: 0xD9B41E, size: 0x8, addend: 0x0, symName: _git_stream_registry_global_init, symObjAddr: 0x0, symBinAddr: 0x271D98, symSize: 0x38 }
-  - { offset: 0xD9B44A, size: 0x8, addend: 0x0, symName: _stream_registry, symObjAddr: 0x2CA8, symBinAddr: 0x3A3B18, symSize: 0x0 }
+  - { offset: 0xD9B44A, size: 0x8, addend: 0x0, symName: _stream_registry, symObjAddr: 0x2CA0, symBinAddr: 0x3A3B18, symSize: 0x0 }
   - { offset: 0xD9B914, size: 0x8, addend: 0x0, symName: _git_stream_registry_global_init, symObjAddr: 0x0, symBinAddr: 0x271D98, symSize: 0x38 }
   - { offset: 0xD9B91C, size: 0x8, addend: 0x0, symName: _shutdown_stream_registry, symObjAddr: 0x38, symBinAddr: 0x271DD0, symSize: 0xC }
   - { offset: 0xD9B935, size: 0x8, addend: 0x0, symName: _shutdown_stream_registry, symObjAddr: 0x38, symBinAddr: 0x271DD0, symSize: 0xC }
