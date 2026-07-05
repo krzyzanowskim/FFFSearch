@@ -1,5 +1,0 @@
-framework module CFFF {
-  umbrella header "fff.h"
-  export *
-  module * { export * }
-}

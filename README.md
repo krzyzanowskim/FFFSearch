@@ -1,55 +1,45 @@
 # FFFSearch
 
-Standalone SwiftPM package that exposes [FFF](https://github.com/dmtrKovalenko/fff) file search to Swift.
+SwiftPM wrapper for [FFF](https://github.com/dmtrKovalenko/fff).
 
-The package intentionally ships FFF as a binary XCFramework. Upstream FFF is a Rust project, and SwiftPM cannot compile Rust sources as ordinary package targets. The included build script provides a source rebuild path for the binary artifact; set `FFF_REF` when you need to pin a specific upstream release.
+FFF is Rust, so this package uses a prebuilt `CFFF.xcframework` from GitHub Releases. The binary is not committed here.
 
-## Contents
-
-- `Binary/CFFF.xcframework` — framework-wrapped Apple platform builds of FFF's `fff-c` library (dynamic with dSYMs for macOS, iOS, tvOS, and visionOS; static for watchOS, where Rust does not support `cdylib`).
-- `Sources/FFFSearch` — Swift wrapper around the C API.
-- `scripts/build-fff-xcframework.sh` — rebuilds the binary artifact from FFF source.
-- `Makefile` — convenience targets for full rebuilds and package checks.
-
-## Requirements
-
-- macOS 13, iOS 13, tvOS 13, visionOS 1, or watchOS 9 or newer.
-- SwiftPM / Xcode command line tools.
-- Rust and `rustup` when rebuilding `Binary/CFFF.xcframework`.
-
-## Usage
-
-Add the package as a dependency and depend on the `FFFSearch` product:
+## Install
 
 ```swift
-.package(url: "git@github.com:krzyzanowskim/FFFSearch.git", from: "0.1.0")
+.package(url: "https://github.com/krzyzanowskim/FFFSearch.git", from: "0.9.6")
 ```
 
-For local development:
+Depend on the `FFFSearch` product.
 
-```swift
-.package(path: "../FFFSearch")
-```
-
-## Development
+## Build
 
 ```bash
 make
 ```
 
-Running `make` rebuilds the binary artifact, prints binary metadata, builds the Swift package, and runs tests when a `Tests` directory exists.
-
-Common narrower targets:
+For local binary work:
 
 ```bash
-make build
 make rebuild-binary
 make binary-info
 ```
 
-The rebuild script fetches upstream tags, resolves the latest stable FFF release tag matching `vMAJOR.MINOR.PATCH`, and builds Apple platform slices for macOS, iOS, tvOS, visionOS, and watchOS. It keeps release debug information, emits dSYMs for dynamic framework slices, and leaves watchOS static object debug info available for the consuming app's final dSYM. Some Intel simulator/watch device Rust targets may be unavailable on a given Rust toolchain; the script includes them when `rustup` provides prebuilt standard libraries and skips them otherwise. Override `FFF_REF` or `FFF_SOURCE_DIR` for pinned/local experiments:
+`make rebuild-binary` builds the latest stable upstream FFF release into ignored `Binary/CFFF.xcframework`. Use `FFF_REF` or `FFF_SOURCE_DIR` only when testing a specific upstream checkout.
+
+## Release
 
 ```bash
-FFF_REF=vX.Y.Z make rebuild-binary
-FFF_SOURCE_DIR=/path/to/fff FFF_SKIP_CHECKOUT=1 make rebuild-binary
+make prepare-binary-release VERSION=0.9.6
+git add Package.swift
+git commit -m "Release 0.9.6"
+git tag 0.9.6
+git push origin main 0.9.6
+make publish-binary-release VERSION=0.9.6
 ```
+
+The prepare step builds the zip, computes the SwiftPM checksum, and updates `Package.swift`. The publish step uploads that zip to the matching GitHub release.
+
+## License
+
+MIT.

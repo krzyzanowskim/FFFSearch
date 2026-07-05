@@ -35,6 +35,9 @@ resolve_fff_ref() {
 if [[ "${FFF_SKIP_CHECKOUT:-0}" != "1" ]]; then
   FFF_RESOLVED_REF="$(resolve_fff_ref)"
   echo "==> Using FFF ref: $FFF_RESOLVED_REF"
+  # Previous builds patch the FFF checkout before compiling; clean those edits
+  # before switching release tags.
+  git -C "$FFF_SOURCE_DIR" reset --hard HEAD
   git -C "$FFF_SOURCE_DIR" checkout "$FFF_RESOLVED_REF"
   git -C "$FFF_SOURCE_DIR" reset --hard "$FFF_RESOLVED_REF"
 else
