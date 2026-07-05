@@ -4,12 +4,12 @@ set -euo pipefail
 # Build the FFF C API as a framework-wrapped XCFramework for the local
 # FFFSearch binary target.
 #
-# Defaults are pinned to the source revision used for the checked-in artifact.
-# Override FFF_SOURCE_DIR to build from an existing checkout while developing.
+# Defaults resolve to the latest stable upstream FFF release tag after fetching.
+# Override FFF_REF or FFF_SOURCE_DIR for pinned/local experiments.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FFF_REPO_URL="${FFF_REPO_URL:-https://github.com/dmtrKovalenko/fff.git}"
-FFF_REF="${FFF_REF:-ca7bf03}"
+FFF_REF="${FFF_REF:-}"
 FFF_SOURCE_DIR="${FFF_SOURCE_DIR:-$ROOT_DIR/.build/fff-source}"
 BUILD_DIR="${BUILD_DIR:-$ROOT_DIR/.build/fff-xcframework}"
 OUTPUT_DIR="$ROOT_DIR/Binary/CFFF.xcframework"
@@ -19,16 +19,46 @@ if [[ ! -d "$FFF_SOURCE_DIR/.git" ]]; then
   git clone "$FFF_REPO_URL" "$FFF_SOURCE_DIR"
 fi
 
-git -C "$FFF_SOURCE_DIR" fetch --tags origin
-# If FFF_SOURCE_DIR was supplied explicitly, still check out the pinned ref unless
-# FFF_SKIP_CHECKOUT=1 is set for local experiments.
+git -C "$FFF_SOURCE_DIR" fetch --tags --force --prune --prune-tags origin
+
+resolve_fff_ref() {
+  if [[ -n "$FFF_REF" ]]; then
+    printf '%s\n' "$FFF_REF"
+    return
+  fi
+
+  git -C "$FFF_SOURCE_DIR" tag --list | python3 "$ROOT_DIR/scripts/select-latest-fff-release.py"
+}
+
+# If FFF_SOURCE_DIR was supplied explicitly, still check out the resolved ref
+# unless FFF_SKIP_CHECKOUT=1 is set for local experiments.
 if [[ "${FFF_SKIP_CHECKOUT:-0}" != "1" ]]; then
-  git -C "$FFF_SOURCE_DIR" checkout "$FFF_REF"
-  git -C "$FFF_SOURCE_DIR" reset --hard "$FFF_REF"
+  FFF_RESOLVED_REF="$(resolve_fff_ref)"
+  echo "==> Using FFF ref: $FFF_RESOLVED_REF"
+  git -C "$FFF_SOURCE_DIR" checkout "$FFF_RESOLVED_REF"
+  git -C "$FFF_SOURCE_DIR" reset --hard "$FFF_RESOLVED_REF"
+else
+  FFF_RESOLVED_REF="$(git -C "$FFF_SOURCE_DIR" rev-parse --short HEAD)"
+  echo "==> Using existing FFF checkout: $FFF_RESOLVED_REF"
 fi
 
 rm -rf "$BUILD_DIR" "$OUTPUT_DIR"
 mkdir -p "$BUILD_DIR"
+
+FFF_BUNDLE_VERSION="$(
+  python3 - "$FFF_SOURCE_DIR/crates/fff-c/Cargo.toml" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+text = Path(sys.argv[1]).read_text()
+match = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
+if not match:
+    raise SystemExit("Could not read fff-c package version")
+print(match.group(1))
+PY
+)"
+echo "==> FFF C API version: $FFF_BUNDLE_VERSION"
 
 # Build dynamic frameworks for platforms that support Rust cdylibs and static
 # frameworks for watchOS, where Rust does not support cdylib outputs. Keep
@@ -183,7 +213,7 @@ build_target() {
 
 make_info_plist() {
   local plist="$1"
-  cat > "$plist" <<'PLIST'
+  cat > "$plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -199,9 +229,9 @@ make_info_plist() {
   <key>CFBundlePackageType</key>
   <string>FMWK</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.6.4</string>
+  <string>${FFF_BUNDLE_VERSION}</string>
   <key>CFBundleVersion</key>
-  <string>0.6.4</string>
+  <string>${FFF_BUNDLE_VERSION}</string>
 </dict>
 </plist>
 PLIST

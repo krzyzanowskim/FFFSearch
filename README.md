@@ -2,7 +2,7 @@
 
 Standalone SwiftPM package that exposes [FFF](https://github.com/dmtrKovalenko/fff) file search to Swift.
 
-The package intentionally ships FFF as a binary XCFramework. Upstream FFF is a Rust project, and SwiftPM cannot compile Rust sources as ordinary package targets. The included build script provides a reproducible source rebuild path for the binary artifact.
+The package intentionally ships FFF as a binary XCFramework. Upstream FFF is a Rust project, and SwiftPM cannot compile Rust sources as ordinary package targets. The included build script provides a source rebuild path for the binary artifact; set `FFF_REF` when you need to pin a specific upstream release.
 
 ## Contents
 
@@ -47,9 +47,9 @@ make rebuild-binary
 make binary-info
 ```
 
-The rebuild script pins FFF to commit `ca7bf03` by default and builds Apple platform slices for macOS, iOS, tvOS, visionOS, and watchOS. It keeps release debug information, emits dSYMs for dynamic framework slices, and leaves watchOS static object debug info available for the consuming app's final dSYM. Some Intel simulator/watch device Rust targets may be unavailable on a given Rust toolchain; the script includes them when `rustup` provides prebuilt standard libraries and skips them otherwise. Override `FFF_REF` or `FFF_SOURCE_DIR` for local experiments:
+The rebuild script fetches upstream tags, resolves the latest stable FFF release tag matching `vMAJOR.MINOR.PATCH`, and builds Apple platform slices for macOS, iOS, tvOS, visionOS, and watchOS. It keeps release debug information, emits dSYMs for dynamic framework slices, and leaves watchOS static object debug info available for the consuming app's final dSYM. Some Intel simulator/watch device Rust targets may be unavailable on a given Rust toolchain; the script includes them when `rustup` provides prebuilt standard libraries and skips them otherwise. Override `FFF_REF` or `FFF_SOURCE_DIR` for pinned/local experiments:
 
 ```bash
-FFF_REF=<commit> make rebuild-binary
+FFF_REF=vX.Y.Z make rebuild-binary
 FFF_SOURCE_DIR=/path/to/fff FFF_SKIP_CHECKOUT=1 make rebuild-binary
 ```
