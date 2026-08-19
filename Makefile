@@ -1,12 +1,11 @@
-.PHONY: all help build release test describe update binary-info prepare-binary-release publish-binary-release clean
+.PHONY: all help release test describe update binary-info prepare-binary-release publish-binary-release clean
 
-all: build test
+all: test release
 
 help:
 	@printf '%s\n' \
 		'Available targets:' \
-		'  make                Build and test the Swift package' \
-		'  make build          Build the Swift package' \
+		'  make                Run tests, then build Swift package in release mode' \
 		'  make release        Build the Swift package in release mode' \
 		'  make test           Run Swift package tests when present' \
 		'  make describe       Print SwiftPM package description' \
@@ -17,9 +16,6 @@ help:
 		'  make publish-binary-release VERSION=X.Y.Z' \
 		'                      Upload the prepared zip to the GitHub release' \
 		'  make clean          Clean SwiftPM build artifacts'
-
-build:
-	swift build
 
 release:
 	swift build -c release
