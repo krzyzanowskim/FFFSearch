@@ -9,7 +9,7 @@ help:
 		'  make release        Build the Swift package in release mode' \
 		'  make test           Run Swift package tests when present' \
 		'  make describe       Print SwiftPM package description' \
-		'  make update         Fetch latest stable upstream FFF and rebuild local Binary/CFFF.xcframework' \
+		'  make update         Fetch latest stable upstream FFF, rebuild local Binary/CFFF.xcframework, then validate package' \
 		'  make binary-info    Print local XCFramework and Mach-O slice info' \
 		'  make prepare-binary-release VERSION=X.Y.Z' \
 		'                      Build, zip, checksum, and update Package.swift' \
@@ -32,6 +32,7 @@ describe:
 
 update:
 	scripts/build-fff-xcframework.sh
+	$(MAKE)
 
 binary-info:
 	@if [ ! -d Binary/CFFF.xcframework ]; then \
