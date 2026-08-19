@@ -1,4 +1,4 @@
-.PHONY: all help build release test describe rebuild-binary binary-info prepare-binary-release publish-binary-release clean
+.PHONY: all help build release test describe update binary-info prepare-binary-release publish-binary-release clean
 
 all: build test
 
@@ -10,7 +10,7 @@ help:
 		'  make release        Build the Swift package in release mode' \
 		'  make test           Run Swift package tests when present' \
 		'  make describe       Print SwiftPM package description' \
-		'  make rebuild-binary Rebuild local ignored Binary/CFFF.xcframework from FFF source' \
+		'  make update         Fetch latest stable upstream FFF and rebuild local Binary/CFFF.xcframework' \
 		'  make binary-info    Print local XCFramework and Mach-O slice info' \
 		'  make prepare-binary-release VERSION=X.Y.Z' \
 		'                      Build, zip, checksum, and update Package.swift' \
@@ -34,12 +34,12 @@ test:
 describe:
 	swift package describe
 
-rebuild-binary:
+update:
 	scripts/build-fff-xcframework.sh
 
 binary-info:
 	@if [ ! -d Binary/CFFF.xcframework ]; then \
-		echo "Binary/CFFF.xcframework is not present; run make rebuild-binary first."; \
+		echo "Binary/CFFF.xcframework is not present; run make update first."; \
 		exit 1; \
 	fi
 	plutil -p Binary/CFFF.xcframework/Info.plist

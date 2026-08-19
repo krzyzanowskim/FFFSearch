@@ -21,11 +21,11 @@ make
 For local binary work:
 
 ```bash
-make rebuild-binary
+make update
 make binary-info
 ```
 
-`make rebuild-binary` builds the latest stable upstream FFF release into ignored `Binary/CFFF.xcframework`. Use `FFF_REF` or `FFF_SOURCE_DIR` only when testing a specific upstream checkout.
+`make update` fetches the latest stable upstream FFF release and rebuilds it into ignored `Binary/CFFF.xcframework`. Use `FFF_REF` or `FFF_SOURCE_DIR` only when testing a specific upstream checkout.
 
 ## Release
 
