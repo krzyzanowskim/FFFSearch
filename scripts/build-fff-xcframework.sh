@@ -87,9 +87,24 @@ PY
 # functions are unused by FFFSearch. Patch the vendored source so those targets
 # compile and return a runtime error if process spawning is requested.
 cargo fetch --manifest-path "$FFF_SOURCE_DIR/Cargo.toml" >/dev/null
-LIBGIT2_SYS_SOURCE="$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*/libgit2-sys-0.18.3+1.9.2' -type d | head -n 1)"
+LIBGIT2_SYS_VERSION="$(
+  python3 - "$FFF_SOURCE_DIR/Cargo.lock" <<'PY'
+from pathlib import Path
+import sys
+
+lines = Path(sys.argv[1]).read_text().splitlines()
+for index, line in enumerate(lines):
+    if line == 'name = "libgit2-sys"':
+        for candidate in lines[index + 1:index + 8]:
+            if candidate.startswith('version = '):
+                print(candidate.split('"', 2)[1])
+                raise SystemExit
+raise SystemExit('Could not read libgit2-sys version from Cargo.lock')
+PY
+)"
+LIBGIT2_SYS_SOURCE="$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path "*/libgit2-sys-${LIBGIT2_SYS_VERSION}" -type d | head -n 1)"
 if [[ -z "$LIBGIT2_SYS_SOURCE" ]]; then
-  echo "Could not locate libgit2-sys source in Cargo registry" >&2
+  echo "Could not locate libgit2-sys ${LIBGIT2_SYS_VERSION} source in Cargo registry" >&2
   exit 1
 fi
 PATCHED_LIBGIT2_SYS="$BUILD_DIR/libgit2-sys-patched"
