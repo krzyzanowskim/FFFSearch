@@ -11,9 +11,9 @@ XCFRAMEWORK_PATH="${XCFRAMEWORK_PATH:-$ROOT_DIR/Binary/CFFF.xcframework}"
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/release-cfff-binary.sh prepare VERSION
-  scripts/release-cfff-binary.sh publish VERSION
-  scripts/release-cfff-binary.sh release VERSION
+  scripts/release-cfff-binary.sh prepare [VERSION]
+  scripts/release-cfff-binary.sh publish [VERSION]
+  scripts/release-cfff-binary.sh release [VERSION]
 
 Modes:
   prepare   Build CFFF.xcframework, zip it for SwiftPM, compute the checksum,
@@ -21,6 +21,8 @@ Modes:
   publish   Upload the prepared zip to an existing pushed GitHub tag release.
   release   Prepare, commit Package.swift, tag VERSION, push the current branch
             and tag, then publish the GitHub release artifact.
+
+When VERSION is omitted, the latest stable upstream FFF C API version is used.
 
 Environment:
   REPO=owner/name               Override GitHub repository detection.
@@ -33,11 +35,6 @@ USAGE
 if [[ "$MODE" == "-h" || "$MODE" == "--help" ]]; then
   usage
   exit 0
-fi
-
-if [[ -z "$VERSION" ]]; then
-  usage
-  exit 64
 fi
 
 if [[ -z "$REPO" ]]; then
@@ -67,6 +64,50 @@ raise SystemExit(1)
 PY
   )"
 fi
+
+resolve_latest_fff_version() {
+  local fff_repo_url="${FFF_REPO_URL:-https://github.com/dmtrKovalenko/fff.git}"
+  local fff_source_dir="${FFF_SOURCE_DIR:-$ROOT_DIR/.build/fff-source}"
+  local fff_ref="${FFF_REF:-}"
+
+  if [[ ! -d "$fff_source_dir/.git" ]]; then
+    rm -rf "$fff_source_dir"
+    git clone "$fff_repo_url" "$fff_source_dir" >/dev/null
+  fi
+
+  git -C "$fff_source_dir" fetch --tags --force --prune --prune-tags origin >/dev/null
+
+  if [[ -z "$fff_ref" ]]; then
+    fff_ref="$(git -C "$fff_source_dir" tag --list | python3 "$ROOT_DIR/scripts/select-latest-fff-release.py")"
+  fi
+
+  git -C "$fff_source_dir" reset --hard HEAD >/dev/null
+  git -C "$fff_source_dir" checkout "$fff_ref" >/dev/null
+  git -C "$fff_source_dir" reset --hard "$fff_ref" >/dev/null
+
+  python3 - "$fff_source_dir/crates/fff-c/Cargo.toml" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+text = Path(sys.argv[1]).read_text()
+match = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
+if not match:
+    raise SystemExit("Could not read fff-c package version")
+print(match.group(1))
+PY
+}
+
+if [[ -z "$VERSION" ]]; then
+  VERSION="$(resolve_latest_fff_version)"
+fi
+
+if [[ -z "$VERSION" ]]; then
+  usage
+  exit 64
+fi
+
+echo "==> Release version: $VERSION"
 
 ARTIFACT_DIR="${ARTIFACT_DIR:-$ROOT_DIR/.build/artifacts/$VERSION}"
 ARCHIVE_PATH="$ARTIFACT_DIR/$ASSET_NAME"

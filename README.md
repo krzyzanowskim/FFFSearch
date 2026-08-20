@@ -2,7 +2,7 @@
 
 SwiftPM wrapper for [FFF](https://github.com/dmtrKovalenko/fff).
 
-FFF is Rust, so this package uses a prebuilt `CFFF.xcframework` from GitHub Releases. The binary is not committed here.
+FFF is written in Rust, so this package uses a prebuilt `CFFF.xcframework` from GitHub Releases. The binary is not committed to the repo.
 
 ## Install
 
@@ -25,15 +25,21 @@ make update
 make binary-info
 ```
 
-`make update` fetches the latest stable upstream FFF release and rebuilds it into ignored `Binary/CFFF.xcframework`. Use `FFF_REF` or `FFF_SOURCE_DIR` only when testing a specific upstream checkout.
+`make update` fetches the latest stable upstream FFF release and rebuilds ignored `Binary/CFFF.xcframework`. Use `FFF_REF` or `FFF_SOURCE_DIR` only when testing a specific upstream checkout.
 
 ## Release
 
 ```bash
-make release VERSION=0.9.6
+make release
 ```
 
-The release target rebuilds `CFFF.xcframework`, zips it, computes the SwiftPM checksum, updates `Package.swift`, commits `Package.swift`, tags the release, pushes the current branch and tag, then creates or updates the matching GitHub release asset.
+`make release` uses the latest stable upstream FFF C API version by default. It rebuilds `CFFF.xcframework`, zips it, computes the SwiftPM checksum, updates `Package.swift`, commits the change, tags the release, pushes the current branch and tag, then creates or updates the GitHub release asset.
+
+To override the release version:
+
+```bash
+make release VERSION=0.9.6
+```
 
 For manual release steps:
 

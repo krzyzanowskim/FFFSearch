@@ -8,7 +8,7 @@ help:
 		'  make                Run tests, then build Swift package in release mode' \
 		'  make swift-release-build' \
 		'                      Build the Swift package in release mode' \
-		'  make release VERSION=X.Y.Z' \
+		'  make release [VERSION=X.Y.Z]' \
 		'                      Prepare, commit, tag, push, and publish a GitHub release' \
 		'  make test           Run Swift package tests when present' \
 		'  make describe       Print SwiftPM package description' \
@@ -24,10 +24,6 @@ swift-release-build:
 	swift build -c release
 
 release:
-	@if [ -z "$(VERSION)" ]; then \
-		echo "VERSION is required, for example: make release VERSION=0.9.6"; \
-		exit 2; \
-	fi
 	scripts/release-cfff-binary.sh release "$(VERSION)"
 
 test:
