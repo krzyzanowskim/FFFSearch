@@ -13,11 +13,14 @@ usage() {
 Usage:
   scripts/release-cfff-binary.sh prepare VERSION
   scripts/release-cfff-binary.sh publish VERSION
+  scripts/release-cfff-binary.sh release VERSION
 
 Modes:
   prepare   Build CFFF.xcframework, zip it for SwiftPM, compute the checksum,
             and update Package.swift with the GitHub release URL.
   publish   Upload the prepared zip to an existing pushed GitHub tag release.
+  release   Prepare, commit Package.swift, tag VERSION, push the current branch
+            and tag, then publish the GitHub release artifact.
 
 Environment:
   REPO=owner/name               Override GitHub repository detection.
@@ -102,6 +105,13 @@ path.write_text(updated)
 PY
 }
 
+require_clean_tracked_worktree() {
+  if ! git -C "$ROOT_DIR" diff --quiet || ! git -C "$ROOT_DIR" diff --cached --quiet; then
+    echo "Working tree has tracked changes; commit or stash them before release." >&2
+    exit 1
+  fi
+}
+
 prepare() {
   "$ROOT_DIR/scripts/build-fff-xcframework.sh"
 
@@ -150,12 +160,53 @@ publish() {
   fi
 }
 
+release() {
+  if ! command -v gh >/dev/null; then
+    echo "GitHub CLI is required for release mode." >&2
+    exit 1
+  fi
+
+  branch="$(git -C "$ROOT_DIR" branch --show-current)"
+  if [[ -z "$branch" ]]; then
+    echo "Cannot release from detached HEAD." >&2
+    exit 1
+  fi
+
+  require_clean_tracked_worktree
+
+  if git -C "$ROOT_DIR" rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
+    echo "Local tag $VERSION already exists." >&2
+    exit 1
+  fi
+
+  if git -C "$ROOT_DIR" ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
+    echo "Remote tag $VERSION already exists on origin." >&2
+    exit 1
+  fi
+
+  prepare
+
+  git -C "$ROOT_DIR" add Package.swift
+  if git -C "$ROOT_DIR" diff --cached --quiet -- Package.swift; then
+    echo "Package.swift did not change; refusing to create an empty release commit." >&2
+    exit 1
+  fi
+
+  git -C "$ROOT_DIR" commit -m "Release $VERSION"
+  git -C "$ROOT_DIR" tag "$VERSION"
+  git -C "$ROOT_DIR" push origin "$branch" "$VERSION"
+  publish
+}
+
 case "$MODE" in
   prepare)
     prepare
     ;;
   publish)
     publish
+    ;;
+  release)
+    release
     ;;
   *)
     usage

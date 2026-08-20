@@ -30,6 +30,14 @@ make binary-info
 ## Release
 
 ```bash
+make release VERSION=0.9.6
+```
+
+The release target rebuilds `CFFF.xcframework`, zips it, computes the SwiftPM checksum, updates `Package.swift`, commits `Package.swift`, tags the release, pushes the current branch and tag, then creates or updates the matching GitHub release asset.
+
+For manual release steps:
+
+```bash
 make prepare-binary-release VERSION=0.9.6
 git add Package.swift
 git commit -m "Release 0.9.6"
@@ -37,8 +45,6 @@ git tag 0.9.6
 git push origin main 0.9.6
 make publish-binary-release VERSION=0.9.6
 ```
-
-The prepare step builds the zip, computes the SwiftPM checksum, and updates `Package.swift`. The publish step uploads that zip to the matching GitHub release.
 
 ## License
 
