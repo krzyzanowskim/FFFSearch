@@ -238,6 +238,7 @@ public struct FFFIndexConfiguration: Sendable, Equatable {
     public let cacheBudgetMaxFileSize: UInt64
     public let enableFileSystemRootScanning: Bool
     public let enableHomeDirectoryScanning: Bool
+    public let followSymlinks: Bool
 
     public init(
         basePath: String,
@@ -253,7 +254,8 @@ public struct FFFIndexConfiguration: Sendable, Equatable {
         cacheBudgetMaxBytes: UInt64 = 0,
         cacheBudgetMaxFileSize: UInt64 = 0,
         enableFileSystemRootScanning: Bool = false,
-        enableHomeDirectoryScanning: Bool = false
+        enableHomeDirectoryScanning: Bool = false,
+        followSymlinks: Bool = false
     ) {
         self.basePath = basePath
         self.frecencyDatabasePath = frecencyDatabasePath
@@ -269,6 +271,7 @@ public struct FFFIndexConfiguration: Sendable, Equatable {
         self.cacheBudgetMaxFileSize = cacheBudgetMaxFileSize
         self.enableFileSystemRootScanning = enableFileSystemRootScanning
         self.enableHomeDirectoryScanning = enableHomeDirectoryScanning
+        self.followSymlinks = followSymlinks
     }
 }
 
@@ -291,7 +294,8 @@ public final class FFFIndex: @unchecked Sendable {
             cacheBudgetMaxBytes: configuration.cacheBudgetMaxBytes,
             cacheBudgetMaxFileSize: configuration.cacheBudgetMaxFileSize,
             enableFileSystemRootScanning: configuration.enableFileSystemRootScanning,
-            enableHomeDirectoryScanning: configuration.enableHomeDirectoryScanning
+            enableHomeDirectoryScanning: configuration.enableHomeDirectoryScanning,
+            followSymlinks: configuration.followSymlinks
         )
     }
 
@@ -309,7 +313,8 @@ public final class FFFIndex: @unchecked Sendable {
         cacheBudgetMaxBytes: UInt64 = 0,
         cacheBudgetMaxFileSize: UInt64 = 0,
         enableFileSystemRootScanning: Bool = false,
-        enableHomeDirectoryScanning: Bool = false
+        enableHomeDirectoryScanning: Bool = false,
+        followSymlinks: Bool = false
     ) throws {
         let resultPointer = try Self.withOptionalCString(frecencyDatabasePath) { frecencyPointer in
             try Self.withOptionalCString(historyDatabasePath) { historyPointer in
@@ -331,7 +336,8 @@ public final class FFFIndex: @unchecked Sendable {
                                 cache_budget_max_bytes: cacheBudgetMaxBytes,
                                 cache_budget_max_file_size: cacheBudgetMaxFileSize,
                                 enable_fs_root_scanning: enableFileSystemRootScanning,
-                                enable_home_dir_scanning: enableHomeDirectoryScanning
+                                enable_home_dir_scanning: enableHomeDirectoryScanning,
+                                follow_symlinks: followSymlinks
                             )
                             return fff_create_instance_with(&options)
                         }
