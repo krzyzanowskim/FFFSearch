@@ -19,8 +19,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "CFFF",
-            url: "https://github.com/krzyzanowskim/FFFSearch/releases/download/0.10.5/CFFF.xcframework.zip",
-            checksum: "280d5ee79e876d8764ea7b87b1a687e92eae99442d064777ed83999ae4c36a2e"
+            url: "https://github.com/krzyzanowskim/FFFSearch/releases/download/0.11.0/CFFF.xcframework.zip",
+            checksum: "3fe729e7d0415c8651da47596ae79d6276200eb3212ba6212053eb99c7d4973f"
         ),
         .target(
             name: "FFFSearch",
