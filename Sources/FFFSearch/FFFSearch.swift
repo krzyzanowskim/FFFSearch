@@ -630,6 +630,7 @@ public final class FFFIndex: @unchecked Sendable {
         pageLimit: UInt32 = 100,
         maxMatchesPerFile: UInt32 = 1,
         timeBudgetMilliseconds: UInt64 = 250,
+        enforceTimeBudget: Bool = false,
         contextLineCount: UInt32 = 0,
         mode: FFFGrepMode = .plainText,
         maxFileSize: UInt64 = 0,
@@ -642,6 +643,7 @@ public final class FFFIndex: @unchecked Sendable {
             pageLimit: pageLimit,
             maxMatchesPerFile: maxMatchesPerFile,
             timeBudgetMilliseconds: timeBudgetMilliseconds,
+            enforceTimeBudget: enforceTimeBudget,
             beforeContextLineCount: contextLineCount,
             afterContextLineCount: contextLineCount,
             mode: mode,
@@ -657,6 +659,7 @@ public final class FFFIndex: @unchecked Sendable {
         pageLimit: UInt32 = 100,
         maxMatchesPerFile: UInt32 = 1,
         timeBudgetMilliseconds: UInt64 = 250,
+        enforceTimeBudget: Bool = false,
         beforeContextLineCount: UInt32 = 0,
         afterContextLineCount: UInt32 = 0,
         mode: FFFGrepMode = .plainText,
@@ -667,7 +670,7 @@ public final class FFFIndex: @unchecked Sendable {
     ) throws -> FFFGrepSearchResult {
         try locked { handle in
             let resultPointer = query.withCString { queryPointer in
-                fff_live_grep(
+                fff_live_grep_ex(
                     handle,
                     queryPointer,
                     mode.rawValue,
@@ -677,12 +680,13 @@ public final class FFFIndex: @unchecked Sendable {
                     fileOffset,
                     pageLimit,
                     timeBudgetMilliseconds,
+                    enforceTimeBudget,
                     beforeContextLineCount,
                     afterContextLineCount,
                     classifyDefinitions
                 )
             }
-            return try Self.readGrepSearchResult(resultPointer, operation: "fff_live_grep")
+            return try Self.readGrepSearchResult(resultPointer, operation: "fff_live_grep_ex")
         }
     }
 
@@ -692,6 +696,7 @@ public final class FFFIndex: @unchecked Sendable {
         pageLimit: UInt32 = 100,
         maxMatchesPerFile: UInt32 = 1,
         timeBudgetMilliseconds: UInt64 = 250,
+        enforceTimeBudget: Bool = false,
         beforeContextLineCount: UInt32 = 0,
         afterContextLineCount: UInt32 = 0,
         maxFileSize: UInt64 = 0,
@@ -705,6 +710,7 @@ public final class FFFIndex: @unchecked Sendable {
             pageLimit: pageLimit,
             maxMatchesPerFile: maxMatchesPerFile,
             timeBudgetMilliseconds: timeBudgetMilliseconds,
+            enforceTimeBudget: enforceTimeBudget,
             beforeContextLineCount: beforeContextLineCount,
             afterContextLineCount: afterContextLineCount,
             maxFileSize: maxFileSize,
@@ -720,6 +726,7 @@ public final class FFFIndex: @unchecked Sendable {
         pageLimit: UInt32 = 100,
         maxMatchesPerFile: UInt32 = 1,
         timeBudgetMilliseconds: UInt64 = 250,
+        enforceTimeBudget: Bool = false,
         beforeContextLineCount: UInt32 = 0,
         afterContextLineCount: UInt32 = 0,
         maxFileSize: UInt64 = 0,
@@ -731,7 +738,7 @@ public final class FFFIndex: @unchecked Sendable {
             let joinedPatterns = patterns.joined(separator: "\n")
             let resultPointer = try Self.withOptionalCString(constraints) { constraintsPointer in
                 joinedPatterns.withCString { patternsPointer in
-                    fff_multi_grep(
+                    fff_multi_grep_ex(
                         handle,
                         patternsPointer,
                         constraintsPointer,
@@ -741,13 +748,14 @@ public final class FFFIndex: @unchecked Sendable {
                         fileOffset,
                         pageLimit,
                         timeBudgetMilliseconds,
+                        enforceTimeBudget,
                         beforeContextLineCount,
                         afterContextLineCount,
                         classifyDefinitions
                     )
                 }
             }
-            return try Self.readGrepSearchResult(resultPointer, operation: "fff_multi_grep")
+            return try Self.readGrepSearchResult(resultPointer, operation: "fff_multi_grep_ex")
         }
     }
 
